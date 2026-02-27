@@ -1,23 +1,41 @@
 // src/js/main.js
-import '../style.css'
-import * as bootstrap from 'bootstrap'
-import 'bootstrap/dist/css/bootstrap.min.css'
-import { setupCounter } from './counter.js'
+import * as yup from 'yup';
+import i18next from 'i18next'
+import { app } from './app.js'
 
-document.querySelector('#app').innerHTML = `
-  <div>
-    <a href="https://vite.dev" target="_blank">
-    </a>
-    <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank">
-    </a>
-    <h1>Hello Vite!</h1>
-    <div class="card">
-      <button id="counter" type="button"></button>
-    </div>
-    <p class="read-the-docs">
-      Click on the Vite logo to learn more
-    </p>
-  </div>
-`
 
-setupCounter(document.querySelector('#counter'))
+export const init = () => {
+  i18next.init({
+    lng: 'ru', 
+    debug: true,
+    resources: {
+      ru: {
+        translation: {
+          errors: {
+                  invalidUrl: 'Ссылка должна быть валидным URL',
+                  urlExists: 'RSS уже существует',
+                  urlNull: 'Не должно быть пустым',
+                  notRss: 'Ресурс не содержит валидный RSS',
+                  errorNetwork: 'Ошибка сети',
+          },
+          success: {
+                  validUrl: 'RSS успешно загружен',
+                },
+          buttons: {
+                  buttonClose: 'Закрыть',
+                  buttonModal: 'Читать полностью',
+                  buttonPost: 'Просмотр'
+          }
+        }
+      }
+    }
+  }).then(() => yup.setLocale({
+    string: {
+      url: () => i18next.t('errors.invalidUrl'),
+    },
+  })).then(() => app())
+}
+
+
+
+
