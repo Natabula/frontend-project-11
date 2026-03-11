@@ -43,7 +43,7 @@ export const app = () => {
       const formData = new FormData(e.target)
       const url = formData.get('url').trim()
       if (!url) {
-        errorsApp(i18next.t('errors.urlNull'), elements)
+        throw errorsApp(i18next.t('errors.urlNull'), elements)
       }
      
 
