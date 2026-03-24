@@ -17,8 +17,8 @@ export const getRss = (url, state) => {
   return axios.get(getProxyUrl(url), { timeout })
     .then(response => response.data.contents)
     .then(data => [data, url])
-    .catch(() => {
-      throw errorsApp(i18next.t('errors.errorNetWork'), state)
+    .catch((error) => {
+      throw new Error(i18next.t('errors.errorNetWork'))
     })
 }
 
