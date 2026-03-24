@@ -59,20 +59,3 @@ export const app = () => {
       })
   })
 }
-
-// const existingUrls = state.feeds.map(feed => feed.url)
-// validateUrl(url, existingUrls, { url })
-//   .then((validUrl) => {
-//     console.log('URL валиден:', validUrl)
-//     elements.input.value = ''
-//     elements.button.classList.remove('disabled')
-//     elements.input.classList.remove('is-invalid')
-//     elements.feedback.textContent = i18next.t('success.validUrl')
-//     elements.feedback.classList.remove('text-danger')
-//     elements.feedback.classList.add('text-success')
-//   })
-//   .catch((err) => {
-//     console.log(err.message)
-//     errorsApp(err.message, elements)
-//     elements.button.classList.remove('disabled')
-//   })
