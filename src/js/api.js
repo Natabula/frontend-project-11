@@ -12,7 +12,7 @@ const getProxyUrl = (url) => {
   return `${baseUrl}?${params.toString()}`
 }
 
-export const getRss = (url, state) => {
+export const getRss = (url) => {
   const timeout = 10000
   return axios.get(getProxyUrl(url), { timeout })
     .then(response => response.data.contents)
@@ -23,8 +23,8 @@ export const getRss = (url, state) => {
 }
 
 export const startTime = (url, posts, state, displaying) => {
-  getRss(url, state)
-    .then(data => parserRss(data, state))
+  getRss(url)
+    .then(data => parserRss(data))
     .then(({ items }) => {
       items.forEach((item) => {
         const newPost = posts.filter(post => post.link === item.link)

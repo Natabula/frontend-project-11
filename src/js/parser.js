@@ -1,7 +1,6 @@
-import { errorsApp } from './errors'
 import i18next from 'i18next'
 
-export const parserRss = ([contents, url], state) => {
+export const parserRss = ([contents, url]) => {
   try {
     const parserDom = new DOMParser()
     const doc = parserDom.parseFromString(contents, 'text/xml')
