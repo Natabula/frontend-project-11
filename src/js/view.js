@@ -97,7 +97,7 @@ const displayingFeeds = (feeds, feedsContainer, postsContainer) => {
 
 const view = (elements, validate, feed, state, urlFeed) => {
   elements.button.classList.remove('disabled')
-  const unsubscribe = subscribe(state, () => {
+  subscribe(state, () => {
     if (state.error) {
       elements.input.classList.add('is-invalid')
       elements.feedback.classList.add('text-danger')
