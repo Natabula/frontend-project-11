@@ -18,7 +18,7 @@ export const getRss = (url, state) => {
     .then(response => response.data.contents)
     .then(data => [data, url])
     .catch((error) => {
-      throw new Error(i18next.t('errors.errorNetWork'))
+      throw new Error(i18next.t('errors.errorNetwork'))
     })
 }
 
