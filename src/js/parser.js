@@ -27,6 +27,6 @@ export const parserRss = ([contents, url]) => {
   }
   catch (e) {
     console.log(e.message)
-    throw new Error(i18next.t(`errors.${e.message}`), { cause: e})
+    throw new Error(i18next.t(`errors.${e.message}`), { cause: e })
   }
 }
