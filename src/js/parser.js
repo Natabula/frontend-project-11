@@ -1,5 +1,3 @@
-import i18next from 'i18next'
-
 export const parserRss = ([contents, url]) => {
   try {
     const parserDom = new DOMParser()
@@ -15,18 +13,20 @@ export const parserRss = ([contents, url]) => {
         throw new Error('notRss')
       }
     }
-    const title = doc.querySelector('channel title').textContent
-    const description = doc.querySelector('channel description').textContent
+    const title = doc.querySelector('channel title')?.textContent ?? ''
+    const description = doc.querySelector('channel description')?.textContent ?? ''
     const items = Array.from(doc.querySelectorAll('item')).map((item) => {
-      const titleItem = item.querySelector('title').textContent
-      const descriptionItem = item.querySelector('description').textContent
-      const link = item.querySelector('link').textContent
+      const titleItem = item.querySelector('title')?.textContent ?? ''
+      const descriptionItem = item.querySelector('description')?.textContent ?? ''
+      const link = item.querySelector('link')?.textContent
       return { titleItem, descriptionItem, link }
     })
     return { url, title, description, items }
   }
   catch (e) {
     console.log(e.message)
-    throw new Error(i18next.t(`errors.${e.message}`), { cause: e })
+    const error = new Error(e.message)
+    error.code = e.message
+    throw error
   }
 }

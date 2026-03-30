@@ -1,6 +1,4 @@
 import axios from 'axios'
-import i18next from 'i18next'
-import { errorsApp } from './errors'
 import { parserRss } from './parser'
 
 const getProxyUrl = (url) => {
@@ -18,7 +16,10 @@ export const getRss = (url) => {
     .then(response => response.data.contents)
     .then(data => [data, url])
     .catch((error) => {
-      throw new Error(i18next.t('errors.errorNetwork'), { cause: error })
+      const err = new Error('errorNetwork')
+      err.code = 'errorNetwork'
+      err.cause = error
+      throw err
     })
 }
 
@@ -29,7 +30,7 @@ export const startTime = (url, posts, state, displaying) => {
       items.forEach((item) => {
         const newPost = posts.filter(post => post.link === item.link)
         if (newPost.length === 0) {
-          displaying(item, 'new')
+          displaying(item, 'new', state)
         }
       })
       return items
@@ -37,9 +38,8 @@ export const startTime = (url, posts, state, displaying) => {
     .then((items) => {
       setTimeout(() => startTime(url, items, state, displaying), 5000)
     })
-    .catch((err) => {
-      console.log(err)
-      setTimeout(() => startTime(url, posts, state), 5000)
-      throw errorsApp(i18next.t('errors.errorNetwork'), state)
+    .catch((error) => {
+      console.log(error)
+      setTimeout(() => startTime(url, posts, state, displaying), 5000)
     })
 }

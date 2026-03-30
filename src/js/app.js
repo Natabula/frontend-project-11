@@ -1,10 +1,12 @@
 // src/js/app.js
 import * as yup from 'yup'
+import 'bootstrap'
+import 'bootstrap/dist/css/bootstrap.min.css'
+import view, { displayingFeeds } from './view.js'
 import { errorsApp } from './errors.js'
 import i18next from 'i18next'
 import { getRss } from './api.js'
 import { parserRss } from './parser.js'
-import view from './view.js'
 import { proxy } from 'valtio/vanilla'
 
 export const app = () => {
@@ -15,47 +17,61 @@ export const app = () => {
     button: document.querySelector('form button'),
     feedsContainer: document.querySelector('.feeds'),
     postsContainer: document.querySelector('.posts'),
-    modalContainer: document.querySelector('.modal-content'),
   }
   const state = proxy({
     error: null,
-    modalPostId: null,
     viewPostIds: [],
     feeds: [],
-    post: [],
     formStatus: 'idle',
   })
 
-  const validateUrl = (url, feeds, feed) => {
-    const scheme = yup.string()
+  const validateUrl = (url, existingUrls) => {
+    return yup.string()
       .url()
-      .notOneOf(feeds, () => i18next.t('errors.urlExists'))
-    return scheme.validate(url)
-      .then(() => {
-        state.error = null
-        state.feeds.push(feed)
-      })
+      .notOneOf(existingUrls, i18next.t('errors.urlExists'))
+      .validate(url)
   }
 
   elements.form.addEventListener('submit', (e) => {
     e.preventDefault()
     elements.button.classList.add('disabled')
-    const formData = new FormData(e.target)
-    const url = formData.get('url').trim()
+
+    const url = elements.input.value.trim()
+
     if (!url) {
-      throw errorsApp(i18next.t('errors.urlNull'), elements)
+      errorsApp(i18next.t('errors.urlNull'), elements)
+      elements.button.classList.remove('disabled')
+      elements.input.focus()
+      return
     }
 
-    getRss(url, state)
-      .then(data => parserRss(data, state))
+    const existingUrls = state.feeds.map(feed => feed.url)
+
+    validateUrl(url, existingUrls)
+      .then(() => getRss(url))
+      .then(data => parserRss(data))
       .then((data) => {
+        state.feeds.push(data)
+        displayingFeeds(state.feeds, elements.feedsContainer, elements.postsContainer, state)
+        elements.input.classList.remove('is-invalid')
+        elements.feedback.className = 'feedback text-success'
+        elements.feedback.textContent = i18next.t('success.validUrl')
         elements.input.value = ''
-        view(elements, validateUrl, data, state, url)
+        elements.input.focus()
+        view(elements, data, state, url)
       })
       .catch((err) => {
         console.log(err)
+        if (err.name === 'ValidationError') {
+          errorsApp(err.message, elements)
+        }
+        else {
+          errorsApp(i18next.t(`errors.${err.code || 'invalidUrl'}`), elements)
+        }
+        elements.input.focus()
+      })
+      .then(() => {
         elements.button.classList.remove('disabled')
-        errorsApp(err.message, elements)
       })
   })
 }
